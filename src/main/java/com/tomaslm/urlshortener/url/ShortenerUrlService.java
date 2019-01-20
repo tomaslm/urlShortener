@@ -8,12 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.tomaslm.urlshortener.statistics.StatisticsService;
+
 @Service
 public class ShortenerUrlService {
 	Logger logger = LoggerFactory.getLogger(ShortenerUrlService.class);
 
 	@Autowired
 	private ShortUrlMappingRepository shortUrlMappingRepository;
+
+	@Autowired
+	private StatisticsService statisticsService;
 
 	@Autowired
 	private RandomStringGeneratorService randomStringGeneratorService;
@@ -25,17 +30,24 @@ public class ShortenerUrlService {
 
 		Optional<ShortUrlMapping> existingMappingWithUrl = shortUrlMappingRepository.findByRealUrl(realUrl);
 		if (existingMappingWithUrl.isPresent()) {
-			logger.info("No need creation for {}, there is already a exiting mapping", realUrl);
-
+			logger.info("No need creation for {}, there is already a exiting mapping so will only refresh created map", realUrl);
+			refreshCreateDate(existingMappingWithUrl.get());
 			return existingMappingWithUrl.get();
 		}
 
 		ShortUrlMapping shortUrlMapping = new ShortUrlMapping(realUrl, generateRandomUniqueString());
 		shortUrlMapping = shortUrlMappingRepository.save(shortUrlMapping);
+		statisticsService.createMapping(shortUrlMapping);
 
-		logger.info("Mapping created for real url ({}), resulting in shortened path ({})", realUrl, shortUrlMapping.getShortenedPath());
+		logger.info("Mapping created for real url ({}), resulting in shortened path ({})", realUrl,
+				shortUrlMapping.getShortenedPath());
 
 		return shortUrlMapping;
+	}
+
+	private void refreshCreateDate(ShortUrlMapping shortUrlMapping) {
+		statisticsService.refreshMapping(shortUrlMapping);
+		shortUrlMappingRepository.updateDateToNow(shortUrlMapping.getId());
 	}
 
 	private String generateRandomUniqueString() {
@@ -43,7 +55,7 @@ public class ShortenerUrlService {
 		int attempt = 0;
 		do {
 			if (attempt > maxRandomUniqueStringGenerationAttemps) {
-				String errorMessage = String.format("Unique string generation attempts exceded maximum of {}",
+				String errorMessage = String.format("Unique string generation attempts exceded maximum of %d",
 						maxRandomUniqueStringGenerationAttemps);
 				logger.error(errorMessage);
 				throw new IllegalStateException(errorMessage);
@@ -61,11 +73,16 @@ public class ShortenerUrlService {
 		if (shortUrlMapping.isPresent()) {
 			logger.info("Found real url using shortened path ({}), realUrl ({})", shortenedPath,
 					shortUrlMapping.get().getRealUrl());
+			statisticsService.saveRedirection(shortUrlMapping.get());
 		} else {
 			logger.warn("Couldnt find real url using shortened path ({})", shortenedPath);
 		}
 
 		return shortUrlMapping.map(ShortUrlMapping::getRealUrl);
+	}
+
+	public void deleteMapping(String realUrl) {
+		boolean deleted = shortUrlMappingRepository.deleteByRealUrl(realUrl);
 	}
 
 }

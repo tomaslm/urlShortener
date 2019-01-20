@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.validator.constraints.URL;
 
 @Entity
 public class ShortUrlMapping {
@@ -29,7 +28,9 @@ public class ShortUrlMapping {
 
 	private ZonedDateTime lastUsedAt;
 
-	// private ZonedDateTime expirationDate;
+	public Long getId() {
+		return id;
+	}
 
 	public String getRealUrl() {
 		return realUrl;

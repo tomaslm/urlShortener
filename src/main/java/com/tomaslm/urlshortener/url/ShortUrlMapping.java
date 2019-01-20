@@ -2,7 +2,10 @@ package com.tomaslm.urlshortener.url;
 
 import java.time.ZonedDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,11 +15,13 @@ import org.hibernate.validator.constraints.URL;
 public class ShortUrlMapping {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@URL
+	@Column(unique = true)
 	private String realUrl;
 
+	@Column(unique = true)
 	private String shortenedPath;
 
 	@CreationTimestamp
@@ -34,8 +39,12 @@ public class ShortUrlMapping {
 		return shortenedPath;
 	}
 
-	public ShortUrlMapping(String realUrl) {
+	public ShortUrlMapping(String realUrl, String shortenedPath) {
 		this.realUrl = realUrl;
+		this.shortenedPath = shortenedPath;
 	}
 
+	public ShortUrlMapping() {
+
+	}
 }

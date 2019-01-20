@@ -1,6 +1,5 @@
 package com.tomaslm.urlshortener.redirect;
 
-import java.net.URL;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;

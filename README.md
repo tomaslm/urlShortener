@@ -1,10 +1,14 @@
 # urlShortener
 Url shortener app make using Java and Springboot
 
+# To package application into a JAR
+```bash
+mvn package
+```
 
 # To run compose:
 ```bash
-docker-compose up
+docker-compose up --build
 ```
 
 # Swagger

@@ -29,3 +29,6 @@ database
 
 ### Maven ###
 .mvn
+
+### Log files ###
+*.log

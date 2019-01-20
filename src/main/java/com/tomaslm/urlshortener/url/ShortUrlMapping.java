@@ -13,15 +13,29 @@ public class ShortUrlMapping {
 
 	@Id
 	private Long id;
-	
+
 	@URL
 	private String realUrl;
-	
+
 	private String shortenedPath;
-	
+
 	@CreationTimestamp
 	private ZonedDateTime createdAt;
-	
-//	private ZonedDateTime expirationDate;	
-	
+
+	private ZonedDateTime lastUsedAt;
+
+	// private ZonedDateTime expirationDate;
+
+	public String getRealUrl() {
+		return realUrl;
+	}
+
+	public String getShortenedPath() {
+		return shortenedPath;
+	}
+
+	public ShortUrlMapping(String realUrl) {
+		this.realUrl = realUrl;
+	}
+
 }

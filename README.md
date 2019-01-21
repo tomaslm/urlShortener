@@ -36,3 +36,8 @@ Database files will be created at project root, on folder database. It can be ch
 # Known bugs
 At the first time application starts, database scripts may take too long to be created and application fail to starts.
 This will only happend in the first run of docker-compose.
+
+# Default ports
+
+By defaul, the springboto app will run on localhost:8080 and the database will run on localhost:5423
+The credentials configured for the database are: username(sample) and password(sample)

@@ -1,12 +1,14 @@
 package com.tomaslm.urlshortener.url;
 
-import org.hibernate.validator.constraints.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.tomaslm.urlshortener.statistics.UrlObject;
 
 @RestController("shortUrl")
 public class ShortUrlController {
@@ -15,15 +17,18 @@ public class ShortUrlController {
 	@Autowired
 	private ShortenerUrlService shortenerUrlService;
 
-	@PostMapping(path = "create", consumes = "text/plain", produces = "text/plain")
-	public String createShortUrl(@RequestBody @URL String realUrl) {
-		ShortUrlMapping shortUrlMapping = shortenerUrlService.createOrUseExisting(realUrl);
+	@PostMapping("create")
+	public String createShortUrl(@RequestBody UrlObject realUrl) {
+		ShortUrlMapping shortUrlMapping = shortenerUrlService.createOrUseExisting(realUrl.getUrl());
 		return shortUrlMapping.getShortenedPath();
 	}
 
-	// @DeleteMapping Delete old ones? Delete least referenced ones?
-	// public void createShortUrl(@RequestBody List<ShortUrlMapping>
-	// shortUrlMapping) {
-	// shortenerUrlService.createOrUpdate();
-	// }
+	@DeleteMapping("delete")
+	public void deleteMappingForced(@RequestBody UrlObject realUrl) {
+		boolean deleted = shortenerUrlService.deleteMappingForced(realUrl.getUrl());
+		if(!deleted) {
+			throw new IllegalStateException("Mapping not found");
+		}
+	}
+
 }

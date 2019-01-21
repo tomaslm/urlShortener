@@ -1,5 +1,6 @@
 package com.tomaslm.urlshortener.url;
 
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,8 +17,8 @@ public interface ShortUrlMappingRepository extends CrudRepository<ShortUrlMappin
 
 	@Transactional
 	@Modifying
-	@Query("UPDATE ShortUrlMapping s SET s.createdAt = now() WHERE id = :id")
-	void updateDateToNow(@Param("id") Long id);
+	@Query("UPDATE ShortUrlMapping s SET s.lastUsedAt = now() WHERE id = :id")
+	void updateLastUsedAtToNow(@Param("id") Long id);
 
-	boolean deleteByRealUrl(String realUrl);
+	boolean deleteByLastUsedAtBefore(ZonedDateTime date);
 }

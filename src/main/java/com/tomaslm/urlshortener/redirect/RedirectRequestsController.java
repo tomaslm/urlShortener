@@ -27,9 +27,6 @@ public class RedirectRequestsController {
 	@Autowired
 	private ShortenerUrlService shortenerUrlService;
 
-	// private static final ModelAndView notFoundView = new ModelAndView(new
-	// View());
-
 	@GetMapping("/{shortenedPath}")
 	@PostMapping("/{shortenedPath}")
 	@PutMapping("/{shortenedPath}")
@@ -52,7 +49,7 @@ public class RedirectRequestsController {
 			httpServletResponse.setHeader("Location", url);
 		}
 
-		httpServletResponse.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
+		httpServletResponse.setStatus(HttpStatus.PERMANENT_REDIRECT.value());
 
 	}
 

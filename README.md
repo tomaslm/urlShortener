@@ -28,3 +28,11 @@ Documentation can be found at /v2/api-docs and also on /swagger-ui.html
 
 Date params follows the iso time, for example: 2019-01-01T00:00:00+00:00
 
+
+# Database
+
+Database files will be created at project root, on folder database. It can be changed by changing configured path on docker-compose.yml
+
+# Known bugs
+At the first time application starts, database scripts may take too long to be created and application fail to starts.
+This will only happend in the first run of docker-compose.
